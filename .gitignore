@@ -1,5 +1,1 @@
-# Node Modules
-/node_modules
-
-# Distribution 
-/dist
+.DS_Store
