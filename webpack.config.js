@@ -1,28 +1,15 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpackMerge = require('webpack-merge');
+const commonConfig = require('./config/webpack.common.config');
 
-module.exports = {
-  entry: "./src/index.js",
-  output: {
-    path: path.join(__dirname, "/dist"),
-    filename: "index-bundle.js"
-  },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: ["babel-loader"]
-      },
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"]
-      }
-    ]
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "./src/index.html"
-    })
-  ]
+module.exports = (env) => {
+    
+    const determineAddons = (addons) => {
+        return [...[addons]]
+            .filter(addon => Boolean(addon))
+            .map(addon => require(`./config/addons/webpack.${addon}.js`));
+    };
+
+    const envConfig = require(`./config/webpack.${env.env}.config`);
+
+    return webpackMerge(commonConfig, envConfig, ...determineAddons(env.addons));
 };
